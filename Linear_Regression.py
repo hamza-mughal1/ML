@@ -1,6 +1,3 @@
-import matplotlib.pyplot as plt
-import time
-
 class LR:
     def __init__(self,data):
         self.data = data
