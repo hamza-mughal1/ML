@@ -1,46 +1,87 @@
+from sympy import *
+
 class LR:
-    def __init__(self,data):
-        self.data = data
-        self.m = 1
+    def __init__(self,x,y,dimension):
+        self.y = y
+        self.x = x
+        self.dimension = dimension-1
+        self.m = [1 for i in range(dimension)]
         self.b = 1
+
+    def equation(self,x):
+        num = 0
+        for pos,i in enumerate(x):
+            num += self.m[pos]*i
+        num+=self.b
+        return num
 
     def SSE(self):
         error = 0
-        for i in self.data:
-            error += (i[1]-(self.m*i[0]+self.b))**2
+        for i in range(len(self.x)):
+            error += (self.y[i]-(self.equation(self.x[i])))**2
 
         return error
     
-    def der_m(self):
-        der = 0
-        for i in self.data:
-            der += (2*i[0])*(self.m*i[0]-i[1]+self.b)
+    def derivative(self,subject):
+        dr = 0
+        for pos,i in enumerate(self.x):
+            e = symbols("b")
+            e = -e
+            e += symbols("y")
+            for j in range(self.dimension):
+                m = symbols(f"m{j}")
+                x = symbols(f"x{j}")
+                e += -m*x
+            e = e**2
+            r = symbols(subject)
+            e = diff(e,r)
+            subss = {"b":self.b,
+                    "y":self.y[pos]}
+            for j in range(self.dimension):
+                subss[f"m{j}"]=self.m[j]
+                subss[f"x{j}"]=i[j]
 
-        return der
+            dr += e.subs(subss)
     
-    def der_b(self):
-        der = 0
-        for i in self.data:
-            der += 2*(self.b-i[1]+self.m*i[0])
-
-        return der
+        return dr
 
     def GD(self,loops):
         l_r = 0.01
         for _ in range(loops):
-            dr_m = self.der_m()
-            dr_m *= l_r
-            self.m -= dr_m
+            for i in range(self.dimension):
+                slope = self.derivative(f"m{i}")
+                step = slope*l_r
+                self.m[i] += step
+            
+            slope = self.derivative("b")
+            step = slope*l_r
+            self.b += step 
 
-            dr_b = self.der_b()
-            dr_b *= l_r
-            self.b -= dr_b
+            l_r = l_r/1.0001
 
-            l_r = l_r/1.001
-        return (f"\n{self.m}\n{self.b}\n")
+        return
     
+    def predict(self,value):
+        e = symbols("b")
+        for j in range(self.dimension):
+            m = symbols(f"m{j}")
+            x = symbols(f"x{j}")
+            e += m*x
 
-model = LR([(2,2.5),(5,4.8),(1,0.9),(3,3.3),(4.5,4.1)])
+        subss = {"b":self.b}
+        for j in range(self.dimension):
+            subss[f"m{j}"]=self.m[j]
+            subss[f"x{j}"]=value[j]
+
+        return e.subs(subss)
+
+
+    
+x = [[2,2],[5,5],[1,1],[3,3],[4.5,4.5]]
+y = [2.5,4.8,0.9,3.3,4.1]
+
+model = LR(x,y,3)
 print(model.SSE())
-print(model.GD(10000))
+print(model.GD(100))
 print(model.SSE())
+print(model.predict([2,2]))
