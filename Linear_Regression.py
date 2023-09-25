@@ -6,7 +6,7 @@ class LR:
         self.y = y
         self.x = x
         self.dimension = dimension-1
-        self.m = [1 for _ in range(self.dimension)]
+        self.m = [1 for i in range(self.dimension)]
         self.b = 1
 
     def equation(self,x):
@@ -102,11 +102,6 @@ y = [100,110,150,165,230,220,200,260]
 
 
 model = LR(x,y,4)
+# print(model.GD(100,out=True))
 # print(model.SSE())
-print(model.predict([600,3,2]))
-# start = time.time()
-# print(model.GD(500,out=True))
-# end = time.time()
-# print("time : ",end-start)
-# print(model.SSE())
-print(model.predict([600,3,2],custom=True,m_l = [0.153836800462613, 1.00527497638890, 1.00235561016996],b_l = 1.00097039900620))
+print(model.predict([4000,10,8],custom=True,m_l = [0.10518191, 7.94595549,0.28735429],b_l = 38.11833274461321))
