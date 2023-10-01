@@ -1,5 +1,8 @@
 import sympy as sp
 import math
+from matplotlib import pyplot as plt
+import time
+import random
 
 class LogReg:
     eular = 2.71828
@@ -59,14 +62,35 @@ class LogReg:
             dr += summ.subs(subss)
     
         return -(dr/len(self.x))
+    
+    def plotting(self):
+        y = []
+        x = []
+        for i in self.x:
+            x.append(i[0])
+
+        x.sort()
+        for i in x:
+            f = 1/(1+(2.71828)**-(self.m[0]*i+self.b))
+            y.append(f)
+
+        plt.plot(x,y)
+
+        plt.xlabel("x value")
+        plt.ylabel("y value")
+
+        plt.show()
 
     def GD(self,loops,out=False):
-        l_r = 0.0005
+        l_r = 0.5
         for o in range(loops):
             print(o)
+            self.plotting()
             for i in range(self.dimension):
                 slope = self.derivative(f"m{i}")
+                print("slope : ",slope)
                 step = slope*l_r
+                print("step: ",step)
                 self.m[i] -= step
             
             slope = self.derivative("b")
@@ -115,14 +139,27 @@ class LogReg:
             return func.subs(subss)
 
     
-model = LogReg([[3,1,8,220,6],[4.5,2.3,11,234,7],[2,0.5,6,160,4],[6,3,13,240,8],[2,1,8,200,6],[3.5,1.3,9,190,7]],[0,1,0,1,1,1],6)
+model = LogReg([[3],[4.5],[2],[6],[2],[3.5]],[0,1,0,1,1,1],2)
 
-print(model.LogLoss())
-print(model.GD(100,out=True))
-print(model.LogLoss())
-
-# print(model.predict([3,1,5,140,4]))
-# print(model.predict([3,1,5,140,4],custom=True,m_l=[-0.696665525399225, 0.267000493054445, -3.44666367560425, -99.7865988722415, -2.09666458368542],b_l=0.510000329599827))
+# print(model.LogLoss())
+print(model.GD(10,out=True))
+# print(model.LogLoss())
 
 
+# x = [3,4.5,2,6,2,3.5]
+#  x.sort()
+# m = 1
+# b = 1
+# y = []
+# for i in x:
+#     f = 1/(1+(2.71828)**-(m*i+b))
+#     y.append(f)
+
+# plt.plot(x,y)
+
+# plt.xlabel("x value")
+# plt.ylabel("y value")
+
+
+# plt.show()
 
