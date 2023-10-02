@@ -45,7 +45,7 @@ class LogReg:
                 m = sp.symbols(f"m{j}")
                 x = sp.symbols(f"x{j}")
                 b += m*x
-            func = 1/1+e**-b
+            func = 1/(1+e**-b)
             y = sp.symbols("y")
             summ = (y*sp.log(func)+(1-y)*sp.log(1-func))
 
@@ -82,20 +82,17 @@ class LogReg:
         plt.show()
 
     def GD(self,loops,out=False):
-        l_r = 0.5
-        for o in range(loops):
-            print(o)
-            self.plotting()
+        l_r = 0.0005
+        for _ in range(loops):
             for i in range(self.dimension):
                 slope = self.derivative(f"m{i}")
-                print("slope : ",slope)
                 step = slope*l_r
-                print("step: ",step)
-                self.m[i] -= step
-            
+                self.m[i] -= step 
+
             slope = self.derivative("b")
             step = slope*l_r
             self.b -= step 
+            
 
             l_r = l_r/1.01
         if out == True:
@@ -139,27 +136,8 @@ class LogReg:
             return func.subs(subss)
 
     
-model = LogReg([[3],[4.5],[2],[6],[2],[3.5]],[0,1,0,1,1,1],2)
+model = LogReg([[3,2,6,150,4],[4.5,3,7,190,7],[2,1,3,130,3],[6,4,13,240,8],[3,3,9,180,6],[3.5,2.2,8,185,7]],[0,1,0,1,1,1],6)
 
-# print(model.LogLoss())
-print(model.GD(10,out=True))
-# print(model.LogLoss())
-
-
-# x = [3,4.5,2,6,2,3.5]
-#  x.sort()
-# m = 1
-# b = 1
-# y = []
-# for i in x:
-#     f = 1/(1+(2.71828)**-(m*i+b))
-#     y.append(f)
-
-# plt.plot(x,y)
-
-# plt.xlabel("x value")
-# plt.ylabel("y value")
-
-
-# plt.show()
-
+print(model.LogLoss())
+print(model.GD(100,out=True))
+print(model.LogLoss())
